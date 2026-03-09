@@ -9,7 +9,7 @@
     <url>http://maven.apache.org</url>
 
     <properties>
-        <!-- App stack (kept as in your project) -->
+        <!-- App stack (kept) -->
         <spring.version>4.2.0.RELEASE</spring.version>
         <spring-security.version>4.0.2.RELEASE</spring-security.version>
         <spring-data-jpa.version>1.8.2.RELEASE</spring-data-jpa.version>
@@ -23,10 +23,13 @@
         <!-- Modernized test stack -->
         <junit.version>4.13.2</junit.version>
         <mockito.version>3.12.4</mockito.version>
-        <maven-surefire-plugin.version>2.22.2</maven-surefire-plugin.version>
 
+        <!-- Modern plugin versions -->
         <maven.compiler.source>1.8</maven.compiler.source>
         <maven.compiler.target>1.8</maven.compiler.target>
+        <maven-compiler-plugin.version>3.10.1</maven-compiler-plugin.version>
+        <maven-surefire-plugin.version>2.22.2</maven-surefire-plugin.version>
+        <maven-war-plugin.version>3.4.0</maven-war-plugin.version>
     </properties>
 
     <dependencies>
@@ -200,6 +203,18 @@
 
     <build>
         <plugins>
+            <!-- Compiler: ensure Java 8 source/target on newer JDKs -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <version>${maven-compiler-plugin.version}</version>
+                <configuration>
+                    <source>${maven.compiler.source}</source>
+                    <target>${maven.compiler.target}</target>
+                    <encoding>UTF-8</encoding>
+                </configuration>
+            </plugin>
+
             <!-- Jetty (kept) -->
             <plugin>
                 <groupId>org.eclipse.jetty</groupId>
@@ -243,7 +258,6 @@
                 <version>${maven-surefire-plugin.version}</version>
                 <configuration>
                     <reuseForks>true</reuseForks>
-                    <!-- Preserve JaCoCo's injected agent options -->
                     <argLine>@{argLine} -Duser.language=en -Duser.country=US</argLine>
                     <includes>
                         <include>**/*Test.java</include>
@@ -251,6 +265,16 @@
                         <include>**/*TestCase.java</include>
                     </includes>
                     <failIfNoTests>false</failIfNoTests>
+                </configuration>
+            </plugin>
+
+            <!-- WAR plugin (UPGRADED to fix API incompatibility) -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-war-plugin</artifactId>
+                <version>${maven-war-plugin.version}</version>
+                <configuration>
+                    <failOnMissingWebXml>false</failOnMissingWebXml>
                 </configuration>
             </plugin>
         </plugins>
